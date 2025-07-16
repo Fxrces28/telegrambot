@@ -1,7 +1,6 @@
 package com.example.telegrambot.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -9,6 +8,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import com.example.telegrambot.feign.WeatherClient;
+
 import java.util.*;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 @RequiredArgsConstructor
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
+    private final WeatherClient weatherClient;
 
     @Override
     public String getBotToken() {
@@ -45,7 +47,13 @@ public class TelegramBot extends TelegramLongPollingBot {
                 sendMessage(chatId, "Пожалуйста, укажите город, например, /weather Moscow");
             }
             else {
-                sendMessage(chatId, ("Погода для " + city + " будет доступна скоро"));
+                try {
+                    String weatherData = weatherClient.getWeather(city);
+                    sendMessage(chatId, weatherData);
+                }
+                catch (Exception e) {
+                    sendMessage(chatId, "Не удалось получить данные о погоде. Проверьте название города или доступность сервиса.");
+                }
             }
         }
         else if (messageText.equalsIgnoreCase("Погода")) {
