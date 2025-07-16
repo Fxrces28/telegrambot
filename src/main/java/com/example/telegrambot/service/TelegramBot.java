@@ -16,6 +16,7 @@ import java.util.ArrayList;
 @RequiredArgsConstructor
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
+    private final Map<Long, String> userState = new HashMap<>();
 
     @Override
     public String getBotToken() {
@@ -35,10 +36,9 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         String messageText = update.getMessage().getText();
         long chatId = update.getMessage().getChatId();
-        sendReplyMenu(chatId);
 
-        if (messageText.equals("/start") || messageText.equals("начать") || messageText.equals("Начать")) {
-            sendMessage(chatId, "Привет! Я бот для проверки погоды. Используй команду /weather <город>, например, /weather Moscow");
+        if (messageText.equals("/start") || messageText.equalsIgnoreCase("Начать") || messageText.equalsIgnoreCase("Привет")) {
+            sendReplyMenu(chatId, "Привет! Я бот для проверки погоды. Используй команду /weather <город>, например, /weather Moscow");
         }
         else if (messageText.startsWith("/weather")) {
             String city = messageText.replace("/weather", "").trim();
@@ -48,6 +48,9 @@ public class TelegramBot extends TelegramLongPollingBot {
             else {
                 sendMessage(chatId, ("Погода для " + city + " будет доступна скоро"));
             }
+        }
+        else if (messageText.equalsIgnoreCase("Погода")) {
+            sendMessage(chatId, "Введите команду /weather <город>, например, /weather Moscow");
         }
         else {
             sendMessage(chatId, "Неизвестная команда. Используй /start, 'начать' или /weather <город>");
@@ -67,11 +70,11 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
     }
 
-    private void sendReplyMenu(long chatId) {
+    private void sendReplyMenu(long chatId, String textToSend) {
 
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
-        message.setText("Выберите команду: ");
+        message.setText(textToSend);
 
         KeyboardRow row = new KeyboardRow();
         row.add("Привет");
