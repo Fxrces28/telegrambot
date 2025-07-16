@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: weather-bot-frontend
+server:
+  port: 8080
+openfeign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
