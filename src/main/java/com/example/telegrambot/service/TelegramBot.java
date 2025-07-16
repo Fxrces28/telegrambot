@@ -6,7 +6,12 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import java.util.*;
+
+import java.util.ArrayList;
 
 @RequiredArgsConstructor
 @Component
@@ -30,6 +35,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         String messageText = update.getMessage().getText();
         long chatId = update.getMessage().getChatId();
+        sendReplyMenu(chatId);
 
         if (messageText.equals("/start") || messageText.equals("начать") || messageText.equals("Начать")) {
             sendMessage(chatId, "Привет! Я бот для проверки погоды. Используй команду /weather <город>, например, /weather Moscow");
@@ -58,6 +64,32 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
         catch (TelegramApiException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void sendReplyMenu(long chatId) {
+
+        SendMessage message = new SendMessage();
+        message.setChatId(String.valueOf(chatId));
+        message.setText("Выберите команду: ");
+
+        KeyboardRow row = new KeyboardRow();
+        row.add("Привет");
+        row.add("Погода");
+
+        List<KeyboardRow> keyboardRowList = new ArrayList<>();
+        keyboardRowList.add(row);
+
+        ReplyKeyboardMarkup markup = new ReplyKeyboardMarkup();
+        markup.setKeyboard(keyboardRowList);
+        markup.setResizeKeyboard(true);
+
+        message.setReplyMarkup(markup);
+
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
         }
     }
 }
