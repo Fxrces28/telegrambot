@@ -16,7 +16,6 @@ import java.util.ArrayList;
 @RequiredArgsConstructor
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
-    private final Map<Long, String> userState = new HashMap<>();
 
     @Override
     public String getBotToken() {
