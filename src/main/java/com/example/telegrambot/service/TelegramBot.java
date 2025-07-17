@@ -39,12 +39,12 @@ public class TelegramBot extends TelegramLongPollingBot {
         long chatId = update.getMessage().getChatId();
 
         if (messageText.equals("/start") || messageText.equalsIgnoreCase("Начать") || messageText.equalsIgnoreCase("Привет")) {
-            sendReplyMenu(chatId, "Привет! Я бот для проверки погоды. Используй команду /weather <город>, например, /weather Moscow");
+            sendReplyMenu(chatId, "Привет! Я бот для проверки погоды. Используй команду /weather <город>, например, /weather Москва");
         }
         else if (messageText.startsWith("/weather")) {
             String city = messageText.replace("/weather", "").trim();
             if (city.isEmpty()) {
-                sendMessage(chatId, "Пожалуйста, укажите город, например, /weather Moscow");
+                sendMessage(chatId, "Пожалуйста, укажите город, например, /weather Москва");
             }
             else {
                 try {
@@ -57,7 +57,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             }
         }
         else if (messageText.equalsIgnoreCase("Погода")) {
-            sendMessage(chatId, "Введите команду /weather <город>, например, /weather Moscow");
+            sendMessage(chatId, "Введите команду /weather <город>, например, /weather Москва");
         }
         else {
             sendMessage(chatId, "Неизвестная команда. Используй /start, 'начать' или /weather <город>");
